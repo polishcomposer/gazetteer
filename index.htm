@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Gazetteer</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Gazetteer">
+	<meta name="author" content="Dariusz Swoszowski">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="libs/css/style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+   <script src="libs/js/leaflet-providers.js"></script>
+   <script src="countryBorders.geo.json" type="text/javascript"></script>
+</head>
+<body>
+    <header>
+        <div id="top"><h1>Geotteer</h1><input type="text" id="searchBar" /><span id="navHeader">NAVIGATIE</span></div>
+        <img src="libs/img/search.png" alt="search" id="search" />
+    </header>
+            <nav>
+                <ul>
+                    <li>Country/Capital City</li>
+                    <li>Population</li>
+                    <li>Currency</li>
+                    <li>Weather</li>
+                    <li>Map</li>
+                    <li>Search for location</li>
+                </ul>
+            </nav>
+    <main>
+        <section id="country">
+            <h2>Location</h2>
+	- timezone, timestamp<br>
+	- your location – city, postcode<br>
+	- country name and flag icon<br>
+	- capital city<br>
+	- official language<br>
+	- population<br>
+        </section>
+        <section id="currency">
+            <h2>Currency</h2>
+            - currency and its icon<br>
+	- exchange rate (to USD by default, if US -> EURO)<br>
+	- percentage change since yesterday<br>
+	- change currency option<br>
+        </section>
+        <section id="weather">
+           <div class="top"> <h2>Weather</h2><span class="button">Today</span>
+            <span class="button">4 days</span></div><br>
+Information:<br>
+- temperature, temp min/max<br>
+- pressure<br>
+- humidity<br>
+- wind speed, deg<br>
+- clouds<br>
+        </section>  
+        <section id="wikipedia">
+        </section>
+        - short info from Wikipedia
+	    - anchor to external content on Wikipedia website for more info
+        <section id="map">
+
+        </section> 
+    </main>
+    <footer>
+
+    </footer>
+    <div id=”preloader”></div>
+    <script type="application/javascript" src="libs/js/jquery-2.2.3.min.js"></script> 
+    <script type="application/javascript" src="libs/js/script.js"></script> 
+  
+</body>
+</html>
