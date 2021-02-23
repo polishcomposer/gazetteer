@@ -4,7 +4,7 @@ body {
     display:flex;
     justify-content: center;
 }
-
+/* --- preloader --- */
 #preloader {
     width:100%;
     height:100%;  
@@ -12,7 +12,6 @@ body {
     z-index:999;
     background-image: radial-gradient(circle, rgba(92,142,255,1) 0%, rgba(6,58,118,1));
   }
-
   #preloader:before {
     content: "";
     position: fixed;
@@ -26,7 +25,19 @@ body {
     -webkit-animation: animate-preloader 1s linear infinite;
     animation: animate-preloader 1s linear infinite;
 }
-
+#preTitle {
+    position: fixed;
+    top: calc(50% - 140px);
+    left: calc(50% - 120px);
+    color: #f0f0f0;
+  font-size: 30px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  text-shadow: 1px 4px 4px #555;
+  font-style:italic;
+}
+#preTitle::first-letter {
+    font-size: 80px;
+}
 @-webkit-keyframes animate-preloader {
     0% {
         -webkit-transform: rotate(0deg);
@@ -48,24 +59,133 @@ body {
         transform: rotate(360deg);
         }
     }
-    
+/*---section preloader */
+.pre_weather, .pre_population, .pre_covid, .pre_information, .pre_news, .pre_currency {
+    content: "";
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    border: 6px solid rgb(133, 133, 133);
+    border-top: 6px solid rgb(226, 218, 74);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    -webkit-animation: animate-preloader 1s linear infinite;
+    animation: animate-preloader 1s linear infinite;
+  }
+.pre_cities, .pre_airports {
+    content: "";
+    top: calc(50% - 15px);
+    left: calc(50% - 15px);
+    border: 3px solid rgb(133, 133, 133);
+    border-top: 6px solid rgb(226, 218, 74);
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    -webkit-animation: animate-preloader 1s linear infinite;
+    animation: animate-preloader 1s linear infinite;
+  }
+.pre_weather_box, .pre_population_box, .pre_information_box, .pre_news_box, .pre_currency_box  {
+    width:100%;
+    height:100%;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+}
+#News {
+    display:none;
+}
+.pre_covid_box, .pre_cities_box, .pre_airports_box  {
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+}
+#pre_cities_ok, #pre_airports_ok {
+    display:none;
+}
+/* --- main panel --- */
+#afterTitle {
+    padding-top:13px;
+  color: #4e4e4e;
+  font-size: 20px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-style:italic;
+     width:100px;
+}
+#afterTitle::first-letter {
+    font-size: 40px;
+}
+#hide {
+  width:25px;
+  height:13px;
+  filter: invert(28%) sepia(3%) saturate(11%) hue-rotate(67deg) brightness(102%) contrast(97%);
+  border:0px;
+}
+ #hide:hover, #hide:active {
+  width:25px;
+  height:13px;
+  cursor:pointer;
+  filter: invert(66%) sepia(7%) saturate(17%) hue-rotate(314deg) brightness(92%) contrast(85%);
+  border:0px;
+ }
+ #topPanel {
+     display: flex;
+     justify-content: space-between;
+     align-items:center;
+     padding: 15px 5px;
+     height:40px;
+     width: 100%;
+ }
+ #topItems {
+    display: flex;
+    width:250px;
+    justify-content: space-evenly;
+    align-items: center;
+ }
+ #homeLocation2 {
+    width: 23px;
+    height: 30px;
+    filter: invert(43%) sepia(80%) saturate(1191%) hue-rotate(194deg) brightness(105%) contrast(104%);
+    border:0px;
+    margin-right:5px;
+   }
+#homeLocation2:hover {
+    width: 23px;
+    height: 30px;
+    cursor: pointer;
+    filter: invert(55%) sepia(94%) saturate(353%) hue-rotate(178deg) brightness(102%) contrast(101%);
+    border:0px;
+    margin-right:5px;
+   }
+ #covidImg {
+  filter: invert(24%) sepia(78%) saturate(5768%) hue-rotate(353deg) brightness(92%) contrast(127%);
+  width:100%;
+ }
+ #cityImg, #homeImg, #flagImg, #airportsImg, #weatherImg, #rubberImg {
+    width:100%;
+   }
 #map {
     width: 100%; 
     height:100%; 
     position:fixed; 
-    top:0px;
+    bottom:0px;
     z-index:-1;
 }
 #cloak {
     width: 100%; 
     height:100%; 
-    position:absolute; 
+    position:fixed; 
     top:0px;
     z-index:1;
+    background-color: rgba(0, 0, 0, 0.5)
 }
 #scrollDown {
         width: 1px;
         height:200px; 
+}
+.leaflet-control-attribution {
+    font-size:0.5em !important;
+    max-width: 370px !important;
 }
 #long {
     position:absolute; 
@@ -74,35 +194,374 @@ body {
     width: 97%; 
 }
 #info {
-    background-image: linear-gradient(rgba(250,250,240, 0.881), rgba(250,250,220, 0.881));
+    background-image: linear-gradient(rgba(250,250,240,0.9), rgba(250,250,220,0.9));
     top:0px;
     box-shadow: 1px 1px 5px rgb(128, 128, 128); 
     border-bottom-left-radius:5px;
     border-bottom-right-radius:5px;
 } 
 .modal-content {
-    background-image: linear-gradient(rgba(250,250,240, 0.781), rgba(250,250,220, 0.781));
+    background-image: linear-gradient(rgba(250,250,240,0.9), rgba(250,250,220,0.9));
 }
 #infoTop {
-    background-image: linear-gradient(rgba(250,250,240, 0.781), rgba(250,250,220, 0.781));
+    background-image: linear-gradient(rgba(250,250,240,0.9), rgba(250,250,220,0.9));
     position:absolute; 
     top:0px;
     right:0px;
     box-shadow: 1px 1px 5px rgb(128, 128, 128);
     height:30px;
+    width:250px;
     z-index:3;
     display: none;
     border-bottom-left-radius:5px;
     border-bottom-right-radius:5px;
+    text-align:center;
 }
+#selectCountry {
+  display:inline;
+}
+.countriesList {
+  margin-top:2px;
+  background-color: transparent;
+  border-color: rgb(136, 136, 136) !important;
+}
+.weatherIconTitle {
+text-transform: uppercase;
+}
+/* --- sections --- */
+#allSections {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    justify-content: center;
+}
+#sunriseImg {
+    width: 10%;
+    filter: invert(76%) sepia(95%) saturate(1064%) hue-rotate(356deg) brightness(99%) contrast(107%);
+}
+#todayWeatherImg {
+    width: 50px;
+}
+#todayWeatherDesc {
+    font-size: 12px;
+}
+#weatherToday {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: 100%;
+}
+#todayDown {
+    text-align: center;
+}
+#SunriseInfo {
+    width: 100%;
+    margin: 10px;
+    text-align: center;
+}
+#todayD {
+    color:red;
+    font-size: 12px;
+    margin-left: 10px;
+}
+#todayWLeft {
+    width: 45%;
+}
+#todayWLeft h2 {
+    margin-bottom: 0px;
+}
+#todayWRight img {
+    width:14px;
+    padding-bottom:5px;
+    filter: invert(34%) sepia(55%) saturate(2979%) hue-rotate(205deg) brightness(99%) contrast(103%);
+}
+#todayWRight {
+    border-left: 1px solid darkgray;
+    padding-left:20px;
+    margin-top:10px;
+}
+#weatherBoxes {
+    font-size:11px;
+     display:flex;
+    flex-wrap:wrap;
+    justify-content:space-evenly;
+}
+#forecastBox {
+    text-align:center;
+}
+#imgF {
+    width:45px;
+}
+.weatherE, .covidE, .currencyE {
+    font-style:italic;
+    color:#686868;
+}
+.informationBox {
+    background-image: linear-gradient(rgb(252, 252, 252), rgb(205, 205, 205));
+    box-shadow: 1px 1px 5px rgb(128, 128, 128);
+    margin:1%;
+    color:#4e4e4e;
+    padding:5px 10px;
+    width:100%;
+}
+.informationBox h2 {
+    margin:6px;
+    font-size:1.5em;
+    font-weight:bold;
+} 
+#countryHeader, .covidHeader {
+    display:flex;
+    align-content:space-between;
+    align-items: center;
+}
+#covidBottom {
+    padding:10px;
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.covidChange {
+    padding: 3px;
+    font-size:10px;
+    background-color:lightgray;
+}
+.covidHeader img {
+    margin-top:8px;
+      filter: invert(24%) sepia(78%) saturate(5768%) hue-rotate(353deg) brightness(92%) contrast(127%);
+  width:35px;
+} 
+.what {
+    font-style:italic;
+    color: rgb(120,120,100);
+}
+.answer {
+    font-weight:bold;
+}
+#countryButtons {
+    display:flex;
+    justify-content:space-evenly;
+    margin-top:20px;
+    align-self: flex-end;
+    width:100%;
+}
+#countryInfo {
+      display:flex;
+      flex-wrap:wrap;
+      align-self: stretch;
+      align-items: space-between;
+      height: 100%;
+      display:none;
+}
+.modal-body p {
+    margin:20px;
+    text-align:justify;
+}
+#covidB {
+    margin-top:15px;
+    float:right;
+    width:100px;
+    height:30px;
+    text-align:center;
+    display:none;
+}
+.covidArticles dd {
+    margin-left:20px;
+      font-style:italic;
+}
+#recovered {
+    color:green;
+    font-weight:bold;
+}
+#dead {
+    color:red;
+    font-weight:bold;
+}
+.modal-body h2 {
+    font-size:1.5em;
+    text-align:center;
+    font-style:italic;
+}
+.cButton {
+    display:flex;
+    flex-wrap: wrap;
+    background-image: linear-gradient(rgb(226, 218, 174), rgb(194, 194, 68));
+    box-shadow: 1px 1px 5px rgb(128, 128, 128);
+    margin:1%;
+    color:#4e4e4e;
+    padding:5px 10px;
+    width:40%;
+    align-items: center;
+    justify-content:center;
 
+}
+#convertCurrency {
+    display:flex;
+    flex-wrap: wrap;
+    background-image: linear-gradient(rgb(174, 195, 226), rgb(68, 103, 184));
+    box-shadow: 1px 1px 5px rgb(128, 128, 128);
+    margin:1%;
+    flex-direction: column;
+    color:#4e4e4e;
+    padding:5px 10px;
+    align-items: center;
+    justify-content:center;  
+    text-align:center;
+    width:200px;
+}
+#curBox {
+    width:100%;
+    display:flex;
+    justify-content: center;
+}
+#selectC {
+    width:180px;
+}
+.covidH2 h2 {
+margin-left:10px;
+}
+.covidCountry2 {
+   display:flex;
+   justify-content: space-evenly; 
+}
+.cButton:hover {
+    background-image: linear-gradient(rgb(226, 218, 74), rgb(194, 194, 28));
+    cursor: pointer;
+}
+#countryPhotoId {
+    margin-top:5px;
+    width:100%;
+    box-shadow: 2px 2px 5px rgb(128, 128, 128);
+}
+#countryPhoto {
+    width:45%;
+}
+#showInfoC {
+    font-size:1em;
+    display:none;
+}
+#places dd {
+    margin-left:20px;
+    padding-bottom:5px;
+}
+#emergency {
+    text-align:right;
+    width:53%;
+}
+#topInfo {
+    display:flex;
+    flex-wrap:wrap;
+    align-content: space-around;
+}
+#currencyInfo {
+    display:none;
+}
+/* --- small panel --- */
+#homeLocation {
+    max-width: 8%;
+    height: auto;
+    filter: invert(43%) sepia(80%) saturate(1191%) hue-rotate(194deg) brightness(105%) contrast(104%);
+    border:0px;
+    margin-right:5px;
+   }
+#selectHolidays {
+    width:150px;
+}
+#bottomInfo {
+       display:flex;
+    justify-content:space-evenly;
+    align-items:center;
+}
+#countryNews {
+  font-size:12px;
+}
+#newsB {
+    float:right;
+    width:100px;
+    margin-top:10px;
+}
+#countryNews img {
+    width:60px; 
+    float:left;
+    margin:10px;
+}
+#homeLocation:hover {
+    max-width: 8%;
+    height: auto;
+    cursor:pointer;
+    filter: invert(55%) sepia(94%) saturate(353%) hue-rotate(178deg) brightness(102%) contrast(101%);
+    border:0px;
+    margin-right:5px;
+   }
+#allNews img {
+    width:20px;
+    margin:3px;
+}
+#allNews dd {
+    margin-left:20px;
+    margin-bottom:10px;
+}
+#show {
+    max-width:10%;
+    height:auto;
+    filter: invert(28%) sepia(3%) saturate(11%) hue-rotate(67deg) brightness(102%) contrast(97%);
+    border:0px;
+    margin-left:7px;
+   }
+#show:hover, #show:active {
+     max-width:10%;
+     height:auto;
+     cursor:pointer;
+     filter: invert(66%) sepia(7%) saturate(17%) hue-rotate(314deg) brightness(92%) contrast(85%);
+     border:0px;
+     margin-left:7px;
+    }
+
+/* --- media rules --- */
 @media (max-height:500px) and (min-width:580px) {
     #scrollDown {
         width:1px !important;
         height:200px !important;
     }
 }
+@media only screen and (min-width:1010px) {
+    .informationBox {
+        width:30%;
+        align-self: stretch;
 
+    }
+}
+@media only screen and (min-width:581px) and (max-width:1009px) {
+    .informationBox {
+        width:45%;
+        align-self: stretch;
+    }
+}
+@media only screen and (max-width:579px) {
+    #afterTitle {
+  font-size: 13px;
+}
+    #afterTitle::first-letter {
+    font-size: 30px;
+}
+    .leaflet-control-attribution {
+        font-size:0.3em !important;
+        width:280px;
+    }
+}
+@media only screen and (max-width:350px) {
+    #afterTitle {
+  font-size: 0px;
+    width:0px;
+}
+    #afterTitle::first-letter {
+    font-size: 30px;
+}
+     .leaflet-control-attribution {
+        font-size:0.3em !important;
+        width:220px;
+    }
+}
 @media only screen and (min-width:580px) {
     #long {
         position:absolute; 
@@ -110,8 +569,11 @@ body {
         display:block;
         width: 80%; 
     }
+    .leaflet-control-attribution {
+        font-size:0.7em !important;
+    }
     #info {
-        background-image: linear-gradient(rgba(250,250,240, 0.881), rgba(250,250,220, 0.881));
+        background-image: linear-gradient(rgba(250,250,240,0.9), rgba(250,250,220,0.9));
         top:10px;
         box-shadow: 1px 1px 5px rgb(128, 128, 128); 
         width:100%; 
@@ -120,7 +582,7 @@ body {
         border-bottom-right-radius:5px;
     }
     #infoTop {
-        background-image: linear-gradient(rgba(250,250,240, 0.781), rgba(250,250,220, 0.781));
+        background-image: linear-gradient(rgba(250,250,240,0.9), rgba(250,250,220,0.9));
         top:0px;
         left:50px;
         box-shadow: 1px 1px 5px rgb(128, 128, 128); 
@@ -137,61 +599,4 @@ body {
         width:0px;
         height:0px;
     }
-}
-
-.leaflet-bar button,
-.leaflet-bar button:hover {
-  background-color: #fff;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  width: 26px;
-  height: 26px;
-  line-height: 26px;
-  display: block;
-  text-align: center;
-  text-decoration: none;
-  color: black;
-}
-
-.leaflet-bar button {
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  overflow: hidden;
-  display: block;
-}
-
-.leaflet-bar button:hover {
-  background-color: #f4f4f4;
-}
-
-.leaflet-bar button:first-of-type {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.leaflet-bar button:last-of-type {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-bottom: none;
-}
-
-.leaflet-bar.disabled,
-.leaflet-bar button.disabled {
-  cursor: default;
-  pointer-events: none;
-  opacity: .4;
-}
-
-.easy-button-button .button-state{
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-
-.leaflet-touch .leaflet-bar button {
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
 }
