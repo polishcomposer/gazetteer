@@ -220,7 +220,7 @@ body {
 #selectCountry {
   display:inline;
 }
-.countriesList {
+.countriesList, .holidaysList {
   margin-top:2px;
   background-color: transparent;
   border-color: rgb(136, 136, 136) !important;
@@ -282,10 +282,13 @@ text-transform: uppercase;
     margin-top:10px;
 }
 #weatherBoxes {
-    font-size:11px;
+    font-size:15px;
      display:flex;
     flex-wrap:wrap;
     justify-content:space-evenly;
+}
+#wholeWheater {
+    display:none;
 }
 #forecastBox {
     text-align:center;
@@ -407,12 +410,20 @@ text-transform: uppercase;
     align-items: center;
     justify-content:center;  
     text-align:center;
-    width:200px;
+    width:80%;
+}
+#currencyData {
+    display:flex;
+    flex-direction: column;
+    width:100%;
+    height:90%;
+    align-items: center;
 }
 #curBox {
     width:100%;
     display:flex;
     justify-content: center;
+    margin-top:20px;
 }
 #selectC {
     width:180px;
@@ -465,10 +476,13 @@ margin-left:10px;
     margin-right:5px;
    }
 #selectHolidays {
-    width:150px;
+    width:90px;
+}
+#placesB {
+    text-align:center;
 }
 #bottomInfo {
-       display:flex;
+     display:flex;
     justify-content:space-evenly;
     align-items:center;
 }
@@ -531,13 +545,31 @@ margin-left:10px;
 
     }
 }
+@media only screen and (min-width:1010px) {
+    #weatherBoxes {
+    font-size:11px;
+    }
+}
 @media only screen and (min-width:581px) and (max-width:1009px) {
+    #weatherBoxes {
+    font-size:15px;
+}
     .informationBox {
         width:45%;
         align-self: stretch;
     }
 }
 @media only screen and (max-width:579px) {
+    .covidCountry2 {
+       font-size:12px;
+     }
+    #forecastBox {
+        margin:5px;
+       text-align:center;
+   }
+    #weatherBoxes {
+        font-size:15px;
+    }
     #afterTitle {
   font-size: 13px;
 }
@@ -550,6 +582,9 @@ margin-left:10px;
     }
 }
 @media only screen and (max-width:350px) {
+    #weatherBoxes {
+        font-size:15px;
+    }
     #afterTitle {
   font-size: 0px;
     width:0px;
@@ -563,6 +598,7 @@ margin-left:10px;
     }
 }
 @media only screen and (min-width:580px) {
+
     #long {
         position:absolute; 
         z-index:1; 
