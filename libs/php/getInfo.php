@@ -17,56 +17,131 @@
 		$requestLat = $_REQUEST['lat'];
 		$requestLng = $_REQUEST['lng'];
 	}
-	$rapidApiKey = "x-rapidapi-key: a2b8543599msh61f31ce8dd35036p1daae4jsn21bf23979fc2";
+	
+$rapidApiKey = "x-rapidapi-key: a2b8543599msh61f31ce8dd35036p1daae4jsn21bf23979fc2";
 
-$urls = ['https://api.opencagedata.com/geocode/v1/json?q=' . $requestLat . '+' . $requestLng . '&language=en&key=498bd3e565df4d96bae3772c99e7eda0',
-	'http://api.geonames.org/findNearbyWikipediaJSON?lat=' . $requestLat . '&lng=' . $requestLng . '&username=polishcomposer',
-	'https://us1.locationiq.com/v1/reverse.php?key=pk.284d0ca5dc7bcb9d1b70803df62c8a1a&format=json&lat=' . $requestLat . '&lon=' . $requestLng,
-	'https://vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com/api/news/get-coronavirus-news/1'];
-	$info1 = [];
-	for($i=0; $i<count($urls); $i++) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_URL,$urls[$i]);
-	if($i==3) {
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com", $rapidApiKey]);	
-	}
-		$result=curl_exec($ch);
-		curl_close($ch);
-		$decode = json_decode($result,true);
-		array_push($info1, $decode);
-	}
+// create both cURL resources
+$ch1 = curl_init();
+$ch2 = curl_init();
+$ch3 = curl_init();
+$ch4 = curl_init();
+// set URL and other appropriate options
+        curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch1, CURLOPT_URL,'https://api.opencagedata.com/geocode/v1/json?q=' . $requestLat . '+' . $requestLng . '&language=en&key=498bd3e565df4d96bae3772c99e7eda0');
 
-$iso2 = $info1[0]['results'][0]['components']['ISO_3166-1_alpha-2'];
-$iso3 = $info1[0]['results'][0]['components']['ISO_3166-1_alpha-3'];
-if($iso2 == 'NY') { $iso2a='CY'; } else { $iso2a=$iso2; }
+        curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch2, CURLOPT_URL,'http://api.geonames.org/findNearbyWikipediaJSON?lat=' . $requestLat . '&lng=' . $requestLng . '&username=polishcomposer');
+        
+		curl_setopt($ch3, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch3, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch3, CURLOPT_URL,'https://us1.locationiq.com/v1/reverse.php?key=pk.284d0ca5dc7bcb9d1b70803df62c8a1a&format=json&lat=' . $requestLat . '&lon=' . $requestLng);
+		
+		curl_setopt($ch4, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch4, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch4, CURLOPT_CUSTOMREQUEST, "GET");
+		curl_setopt($ch4, CURLOPT_HTTPHEADER, ["x-rapidapi-host: vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com", $rapidApiKey]);	
+		curl_setopt($ch4, CURLOPT_URL,'https://vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com/api/news/get-coronavirus-news/1');
+//create the multiple cURL handle
+$mh = curl_multi_init();
 
-$urls2 = ['https://restcountries.eu/rest/v2/alpha/' . $iso3,
-'https://corona-api.com/countries/' . $iso2a, 'https://calendarific.com/api/v2/holidays?&api_key=2adeac4fe82f4d26180b4fba95220aaae0cf7cc8&country=' . $iso2a . '&year=2021',
-'https://travelbriefing.org/' . $iso2a . '?format=json',
-'https://geohub3.p.rapidapi.com/cities/country/' . $iso2a . '?page=1&pageSize=2000&sort=desc&orderBy=population',
-'https://airportix.p.rapidapi.com/airport/country_code/' . $iso2a . '/%7Bclassification%7D',
-'https://api.openweathermap.org/data/2.5/onecall?lat=' . $info1[2]['lat'] . '&lon=' . $info1[2]['lon'] . '&exclude=minutely,hourly&units=metric&appid=d585e08b3b66222fc518c1729559ec1c'];
-	$info2 = [];
-	for($i2=0; $i2<count($urls2); $i2++) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_URL,$urls2[$i2]);
-		if($i2==4) {
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-			curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: geohub3.p.rapidapi.com", $rapidApiKey]);
-		} else if($i2==5) {
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-			curl_setopt($ch, CURLOPT_HTTPHEADER, ["x-rapidapi-host: airportix.p.rapidapi.com", $rapidApiKey]);	
-		}
-			$result=curl_exec($ch);
-			curl_close($ch);
-			$decode = json_decode($result,true);
-			array_push($info2, $decode);
-	}
+//add the two handles
+curl_multi_add_handle($mh,$ch1);
+curl_multi_add_handle($mh,$ch2);
+curl_multi_add_handle($mh,$ch3);
+curl_multi_add_handle($mh,$ch4);
+//execute the multi handle
+do {
+    $status = curl_multi_exec($mh, $active);
+    if ($active) {
+        curl_multi_select($mh);
+    }
+} while ($active && $status == CURLM_OK);
+
+//close the handles
+curl_multi_remove_handle($mh, $ch1);
+curl_multi_remove_handle($mh, $ch2);
+curl_multi_remove_handle($mh, $ch3);
+curl_multi_remove_handle($mh, $ch4);
+curl_multi_close($mh);
+$location = json_decode(curl_multi_getcontent($ch1),true);
+$places = json_decode(curl_multi_getcontent($ch2),true);
+$decode3 = json_decode(curl_multi_getcontent($ch3),true);
+$covidNews = json_decode(curl_multi_getcontent($ch4),true);
+
+$iso2 = $location['results'][0]['components']['ISO_3166-1_alpha-2'];
+$iso3 = $location['results'][0]['components']['ISO_3166-1_alpha-3'];
+if($iso2 == 'NY') { $iso2a='CY'; } else { $iso2a = $iso2; }
+
+// create both cURL resources
+$ch5 = curl_init();
+$ch6 = curl_init();
+$ch7 = curl_init();
+$ch8 = curl_init();
+$ch9 = curl_init();
+$ch10 = curl_init();
+// set URL and other appropriate options
+        curl_setopt($ch5, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch5, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch5, CURLOPT_URL,'https://restcountries.eu/rest/v2/alpha/' . $iso3);
+
+        curl_setopt($ch6, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch6, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch6, CURLOPT_URL,'https://calendarific.com/api/v2/holidays?&api_key=2adeac4fe82f4d26180b4fba95220aaae0cf7cc8&country=' . $iso2a . '&year=2021');
+        
+		curl_setopt($ch7, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch7, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch7, CURLOPT_URL,'https://travelbriefing.org/' . $iso2a . '?format=json');
+
+		curl_setopt($ch8, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch8, CURLOPT_RETURNTRANSFER, true);	
+		curl_setopt($ch8, CURLOPT_CUSTOMREQUEST, "GET");
+		curl_setopt($ch8, CURLOPT_HTTPHEADER, ["x-rapidapi-host: geohub3.p.rapidapi.com", $rapidApiKey]);
+		curl_setopt($ch8, CURLOPT_URL,'https://geohub3.p.rapidapi.com/cities/country/' . $iso2a . '?page=1&pageSize=2000&sort=desc&orderBy=population');
+
+		curl_setopt($ch9, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch9, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch9, CURLOPT_CUSTOMREQUEST, "GET");
+		curl_setopt($ch9, CURLOPT_HTTPHEADER, ["x-rapidapi-host: airportix.p.rapidapi.com", $rapidApiKey]);	
+		curl_setopt($ch9, CURLOPT_URL,'https://airportix.p.rapidapi.com/airport/country_code/' . $iso2a . '/%7Bclassification%7D');
+		
+		curl_setopt($ch10, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch10, CURLOPT_RETURNTRANSFER, true);	
+		curl_setopt($ch10, CURLOPT_URL,'https://api.openweathermap.org/data/2.5/onecall?lat=' . $decode3['lat'] . '&lon=' . $decode3['lon'] . '&exclude=minutely,hourly&units=metric&appid=d585e08b3b66222fc518c1729559ec1c');
+
+		//create the multiple cURL handle
+$mh2 = curl_multi_init();
+
+//add the two handles
+curl_multi_add_handle($mh2,$ch5);
+curl_multi_add_handle($mh2,$ch6);
+curl_multi_add_handle($mh2,$ch7);
+curl_multi_add_handle($mh2,$ch8);
+curl_multi_add_handle($mh2,$ch9);
+curl_multi_add_handle($mh2,$ch10);
+//execute the multi handle
+do {
+    $status = curl_multi_exec($mh2, $active);
+    if ($active) {
+        curl_multi_select($mh2);
+    }
+} while ($active && $status == CURLM_OK);
+
+//close the handles
+curl_multi_remove_handle($mh2, $ch5);
+curl_multi_remove_handle($mh2, $ch6);
+curl_multi_remove_handle($mh2, $ch7);
+curl_multi_remove_handle($mh2, $ch8);
+curl_multi_remove_handle($mh2, $ch9);
+curl_multi_remove_handle($mh2, $ch10);
+curl_multi_close($mh2);
+$population = json_decode(curl_multi_getcontent($ch5),true);
+$holidays = json_decode(curl_multi_getcontent($ch6),true);
+$travelInfo = json_decode(curl_multi_getcontent($ch7),true);
+$cities = json_decode(curl_multi_getcontent($ch8),true);
+$airports = json_decode(curl_multi_getcontent($ch9),true);
+$weather = json_decode(curl_multi_getcontent($ch10),true);
 
 	$border = file_get_contents('../js/countryBorders.geo.json');	
 	$decodedBorders = json_decode($border, TRUE);
@@ -78,29 +153,62 @@ $urls2 = ['https://restcountries.eu/rest/v2/alpha/' . $iso3,
 	$curLink = 'https://openexchangerates.org/api/currencies.json';
 	$currencies = file_get_contents($curLink);	
 	$decodedCurrencies = json_decode($currencies, TRUE);
+
 	$countryName = $countryBorder['properties']['name'];
-	$citiesIds = '';                 
+	$citiesIds = '';    
+	            
 	for($c=0; $c<20; $c++) {
 	  if($c==19) {
-		$citiesIds .= $info2[4]['data']['cities'][$c]['id'];
+		$citiesIds .= $cities['data']['cities'][$c]['id'];
 	  } else {
-		$citiesIds .= $info2[4]['data']['cities'][$c]['id'] . ',';
+		$citiesIds .= $cities['data']['cities'][$c]['id'] . ',';
 	  }
 	}
-$urls3 = ['https://api.thenewsapi.com/v1/news/all?api_token=fQEQRdYwJLmUnc9tYo6OfVpj5axkUhemNSolOjE4&language=en&search=' . $countryName,
-	'https://pixabay.com/api/?key=3853087-8c2a07a3d1d9a8e2ac4f750a3&q=' . $countryName . '+city&image_type=photo&per_page=3',
-	'http://api.openweathermap.org/data/2.5/group?id=' . $citiesIds . '&units=metric&appid=d585e08b3b66222fc518c1729559ec1c'];
-	$info3 = [];
-		for($i3=0; $i3<count($urls3); $i3++) {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_URL,$urls3[$i3]);
-			$result=curl_exec($ch);
-			curl_close($ch);
-			$decode = json_decode($result,true);
-			array_push($info3, $decode);
-		}
+	
+	
+	
+
+// create both cURL resources
+$ch11 = curl_init();
+$ch12 = curl_init();
+$ch13 = curl_init();
+// set URL and other appropriate options
+        curl_setopt($ch11, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch11, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch11, CURLOPT_URL,'https://api.thenewsapi.com/v1/news/all?api_token=fQEQRdYwJLmUnc9tYo6OfVpj5axkUhemNSolOjE4&language=en&search=' . $countryName);
+
+        curl_setopt($ch12, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch12, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch12, CURLOPT_URL,'https://pixabay.com/api/?key=3853087-8c2a07a3d1d9a8e2ac4f750a3&q=' . $countryName . '+city&image_type=photo&per_page=3');
+        
+		curl_setopt($ch13, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch13, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch13, CURLOPT_URL,'http://api.openweathermap.org/data/2.5/group?id=' . $citiesIds . '&units=metric&appid=d585e08b3b66222fc518c1729559ec1c');
+
+
+		//create the multiple cURL handle
+$mh3 = curl_multi_init();
+
+//add the two handles
+curl_multi_add_handle($mh3,$ch11);
+curl_multi_add_handle($mh3,$ch12);
+curl_multi_add_handle($mh3,$ch13);
+//execute the multi handle
+do {
+    $status = curl_multi_exec($mh3, $active);
+    if ($active) {
+        curl_multi_select($mh3);
+    }
+} while ($active && $status == CURLM_OK);
+
+//close the handles
+curl_multi_remove_handle($mh3, $ch11);
+curl_multi_remove_handle($mh3, $ch12);
+curl_multi_remove_handle($mh3, $ch13);
+curl_multi_close($mh3);
+$news = json_decode(curl_multi_getcontent($ch11),true);
+$countryImg = json_decode(curl_multi_getcontent($ch12),true);
+$citiesWeather = json_decode(curl_multi_getcontent($ch13),true);
 
 $output['status']['code'] = "200";
 $output['status']['name'] = "ok";
@@ -109,22 +217,18 @@ $output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000
 
 $output['data']['countryBorder'] = $countryBorder;
 $output['data']['currencies'] = $decodedCurrencies;
-
-$output['data']['location'] = $info1[0];
-$output['data']['places'] = $info1[1];
-$output['data']['covidNews'] = $info1[3];
-
-$output['data']['population'] = $info2[0];
-$output['data']['covidStats'] = $info2[1];
-$output['data']['holidays'] = $info2[2];
-$output['data']['travelInfo'] = $info2[3];
-$output['data']['cities'] = $info2[4];
-$output['data']['airports'] = $info2[5];
-$output['data']['weather'] = $info2[6];
-
-$output['data']['News'] = $info3[0];
-$output['data']['countryImg'] = $info3[1];
-$output['data']['citiesWeather'] = $info3[2];
+$output['data']['location'] = $location;
+$output['data']['places'] = $places;
+$output['data']['covidNews'] = $covidNews;
+$output['data']['population'] = $population;
+$output['data']['holidays'] = $holidays;
+$output['data']['travelInfo'] = $travelInfo;
+$output['data']['cities'] = $cities;
+$output['data']['airports'] = $airports;
+$output['data']['weather'] = $weather;
+$output['data']['News'] = $news;
+$output['data']['countryImg'] = $countryImg;
+$output['data']['citiesWeather'] = $citiesWeather;
 
 if($_REQUEST['change']==1) {
 $output['data']['capital'] = $decodeC;
