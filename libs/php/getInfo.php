@@ -20,12 +20,12 @@
 	
 $rapidApiKey = "x-rapidapi-key: a2b8543599msh61f31ce8dd35036p1daae4jsn21bf23979fc2";
 
-// create both cURL resources
+
 $ch1 = curl_init();
 $ch2 = curl_init();
 $ch3 = curl_init();
 $ch4 = curl_init();
-// set URL and other appropriate options
+
         curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch1, CURLOPT_URL,'https://api.opencagedata.com/geocode/v1/json?q=' . $requestLat . '+' . $requestLng . '&language=en&key=498bd3e565df4d96bae3772c99e7eda0');
@@ -43,15 +43,15 @@ $ch4 = curl_init();
 		curl_setopt($ch4, CURLOPT_CUSTOMREQUEST, "GET");
 		curl_setopt($ch4, CURLOPT_HTTPHEADER, ["x-rapidapi-host: vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com", $rapidApiKey]);	
 		curl_setopt($ch4, CURLOPT_URL,'https://vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com/api/news/get-coronavirus-news/1');
-//create the multiple cURL handle
+
 $mh = curl_multi_init();
 
-//add the two handles
+
 curl_multi_add_handle($mh,$ch1);
 curl_multi_add_handle($mh,$ch2);
 curl_multi_add_handle($mh,$ch3);
 curl_multi_add_handle($mh,$ch4);
-//execute the multi handle
+
 do {
     $status = curl_multi_exec($mh, $active);
     if ($active) {
@@ -59,7 +59,7 @@ do {
     }
 } while ($active && $status == CURLM_OK);
 
-//close the handles
+
 curl_multi_remove_handle($mh, $ch1);
 curl_multi_remove_handle($mh, $ch2);
 curl_multi_remove_handle($mh, $ch3);
@@ -74,14 +74,14 @@ $iso2 = $location['results'][0]['components']['ISO_3166-1_alpha-2'];
 $iso3 = $location['results'][0]['components']['ISO_3166-1_alpha-3'];
 if($iso2 == 'NY') { $iso2a='CY'; } else { $iso2a = $iso2; }
 
-// create both cURL resources
+
 $ch5 = curl_init();
 $ch6 = curl_init();
 $ch7 = curl_init();
 $ch8 = curl_init();
 $ch9 = curl_init();
 $ch10 = curl_init();
-// set URL and other appropriate options
+
         curl_setopt($ch5, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch5, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch5, CURLOPT_URL,'https://restcountries.eu/rest/v2/alpha/' . $iso3);
@@ -110,17 +110,17 @@ $ch10 = curl_init();
 		curl_setopt($ch10, CURLOPT_RETURNTRANSFER, true);	
 		curl_setopt($ch10, CURLOPT_URL,'https://api.openweathermap.org/data/2.5/onecall?lat=' . $decode3['lat'] . '&lon=' . $decode3['lon'] . '&exclude=minutely,hourly&units=metric&appid=d585e08b3b66222fc518c1729559ec1c');
 
-		//create the multiple cURL handle
+		
 $mh2 = curl_multi_init();
 
-//add the two handles
+
 curl_multi_add_handle($mh2,$ch5);
 curl_multi_add_handle($mh2,$ch6);
 curl_multi_add_handle($mh2,$ch7);
 curl_multi_add_handle($mh2,$ch8);
 curl_multi_add_handle($mh2,$ch9);
 curl_multi_add_handle($mh2,$ch10);
-//execute the multi handle
+
 do {
     $status = curl_multi_exec($mh2, $active);
     if ($active) {
@@ -128,7 +128,7 @@ do {
     }
 } while ($active && $status == CURLM_OK);
 
-//close the handles
+
 curl_multi_remove_handle($mh2, $ch5);
 curl_multi_remove_handle($mh2, $ch6);
 curl_multi_remove_handle($mh2, $ch7);
@@ -136,6 +136,7 @@ curl_multi_remove_handle($mh2, $ch8);
 curl_multi_remove_handle($mh2, $ch9);
 curl_multi_remove_handle($mh2, $ch10);
 curl_multi_close($mh2);
+
 $population = json_decode(curl_multi_getcontent($ch5),true);
 $holidays = json_decode(curl_multi_getcontent($ch6),true);
 $travelInfo = json_decode(curl_multi_getcontent($ch7),true);
@@ -164,15 +165,11 @@ $weather = json_decode(curl_multi_getcontent($ch10),true);
 		$citiesIds .= $cities['data']['cities'][$c]['id'] . ',';
 	  }
 	}
-	
-	
-	
 
-// create both cURL resources
 $ch11 = curl_init();
 $ch12 = curl_init();
 $ch13 = curl_init();
-// set URL and other appropriate options
+
         curl_setopt($ch11, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch11, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch11, CURLOPT_URL,'https://api.thenewsapi.com/v1/news/all?api_token=fQEQRdYwJLmUnc9tYo6OfVpj5axkUhemNSolOjE4&language=en&search=' . $countryName);
@@ -185,15 +182,13 @@ $ch13 = curl_init();
 		curl_setopt($ch13, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch13, CURLOPT_URL,'http://api.openweathermap.org/data/2.5/group?id=' . $citiesIds . '&units=metric&appid=d585e08b3b66222fc518c1729559ec1c');
 
-
-		//create the multiple cURL handle
 $mh3 = curl_multi_init();
 
-//add the two handles
+
 curl_multi_add_handle($mh3,$ch11);
 curl_multi_add_handle($mh3,$ch12);
 curl_multi_add_handle($mh3,$ch13);
-//execute the multi handle
+
 do {
     $status = curl_multi_exec($mh3, $active);
     if ($active) {
@@ -201,7 +196,6 @@ do {
     }
 } while ($active && $status == CURLM_OK);
 
-//close the handles
 curl_multi_remove_handle($mh3, $ch11);
 curl_multi_remove_handle($mh3, $ch12);
 curl_multi_remove_handle($mh3, $ch13);
