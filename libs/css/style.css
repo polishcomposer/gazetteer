@@ -59,50 +59,7 @@ body {
         transform: rotate(360deg);
         }
     }
-/*---section preloader */
-.pre_weather, .pre_population, .pre_covid, .pre_information, .pre_news, .pre_currency {
-    content: "";
-    top: calc(50% - 30px);
-    left: calc(50% - 30px);
-    border: 6px solid rgb(133, 133, 133);
-    border-top: 6px solid rgb(226, 218, 74);
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    -webkit-animation: animate-preloader 1s linear infinite;
-    animation: animate-preloader 1s linear infinite;
-  }
-.pre_cities, .pre_airports {
-    content: "";
-    top: calc(50% - 15px);
-    left: calc(50% - 15px);
-    border: 3px solid rgb(133, 133, 133);
-    border-top: 6px solid rgb(226, 218, 74);
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    -webkit-animation: animate-preloader 1s linear infinite;
-    animation: animate-preloader 1s linear infinite;
-  }
-.pre_weather_box, .pre_population_box, .pre_information_box, .pre_news_box, .pre_currency_box  {
-    width:100%;
-    height:100%;
-    display: flex;
-    align-items: center;
-    justify-content:center;
-}
-#News {
-    display:none;
-}
-.pre_covid_box, .pre_cities_box, .pre_airports_box  {
-    width:100%;
-    display: flex;
-    align-items: center;
-    justify-content:center;
-}
-#pre_cities_ok, #pre_airports_ok {
-    display:none;
-}
+
 /* --- main panel --- */
 #afterTitle {
     padding-top:13px;
@@ -287,9 +244,7 @@ text-transform: uppercase;
     flex-wrap:wrap;
     justify-content:space-evenly;
 }
-#wholeWheater {
-    display:none;
-}
+
 #forecastBox {
     text-align:center;
 }
@@ -354,7 +309,6 @@ text-transform: uppercase;
       align-self: stretch;
       align-items: space-between;
       height: 100%;
-      display:none;
 }
 .modal-body p {
     margin:20px;
@@ -366,7 +320,6 @@ text-transform: uppercase;
     width:100px;
     height:30px;
     text-align:center;
-    display:none;
 }
 .covidArticles dd {
     margin-left:20px;
@@ -426,7 +379,7 @@ text-transform: uppercase;
     margin-top:20px;
 }
 #selectC {
-    width:180px;
+    width:90%;
 }
 .covidH2 h2 {
 margin-left:10px;
@@ -449,7 +402,6 @@ margin-left:10px;
 }
 #showInfoC {
     font-size:1em;
-    display:none;
 }
 #places dd {
     margin-left:20px;
@@ -463,9 +415,6 @@ margin-left:10px;
     display:flex;
     flex-wrap:wrap;
     align-content: space-around;
-}
-#currencyInfo {
-    display:none;
 }
 /* --- small panel --- */
 #homeLocation {
@@ -564,7 +513,7 @@ margin-left:10px;
        font-size:12px;
      }
     #forecastBox {
-        margin:5px;
+        margin:10px;
        text-align:center;
    }
     #weatherBoxes {
