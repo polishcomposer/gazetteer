@@ -11,7 +11,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
   Long = position.coords.longitude;
 
   requests(0, Lat, Long);
-  function requests(change, userLat = '', userLong = '', iso2 = '', viewCapital = '', viewCountry = '') {
+  function requests(change, userLat = '', userLong = '', iso2a = '', viewCapital = '') {
     $.ajax({
       url: "libs/php/getInfo.php",
       type: 'POST',
@@ -20,12 +20,12 @@ navigator.geolocation.getCurrentPosition(function success(position) {
         lat: userLat,
         lng: userLong,
         change: change,
-        iso2: iso2
+        iso2: iso2a
       },
 
       success: function (result) {
         if (result.status.name == "ok") {
-          console.log(result);
+        
           if(change==1) {
             userLat = result['data']['capital'][1][0]['latitude'];
             userLong = result['data']['capital'][1][0]['longitude'];
@@ -355,12 +355,12 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             $('#infoTop').fadeIn();
             $('#cloak').fadeOut();
             $('#scrollDown').toggle();
-            checkCitiesLayer = map.addLayer(markers);
-            citiesEasyButoon.button.style.backgroundColor = 'gold';
-            if(requestCities == 0) {
+             if(requestCities == 0) {
               getCities();
               requestCities = 1;
             }
+            checkCitiesLayer = map.addLayer(markers);
+            citiesEasyButoon.button.style.backgroundColor = 'gold';
           });
           function getCities() {
             $.ajax({
@@ -528,9 +528,9 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
 
 var map = L.map('map');
 const streetsView = L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
-const imageryView = L.tileLayer.provider('Esri.WorldImagery').addTo(map);
-const topoView = L.tileLayer.provider('OpenTopoMap').addTo(map);
-const darkView = L.tileLayer.provider('Stadia.AlidadeSmoothDark').addTo(map);
+const imageryView = L.tileLayer.provider('Esri.WorldImagery');
+const topoView = L.tileLayer.provider('OpenTopoMap');
+const darkView = L.tileLayer.provider('Stadia.AlidadeSmoothDark');
 const baseMaps = {
   "<img src='libs/img/darkView.png' style='width:70%;'>": darkView,
   "<img src='libs/img/topoView.png' style='width:70%;'>": topoView,
