@@ -278,6 +278,7 @@ text-transform: uppercase;
     display:flex;
     justify-content: space-between;
     align-items: flex-end;
+    height:70%;
 }
 .covidChange {
     padding: 3px;
@@ -383,6 +384,9 @@ text-transform: uppercase;
 }
 .covidH2 h2 {
 margin-left:10px;
+}
+.covidCountry {
+    line-height: 1.5em;
 }
 .covidCountry2 {
    display:flex;
