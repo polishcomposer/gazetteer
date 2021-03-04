@@ -5,7 +5,7 @@ $(window).on('load', function () {
     });
   }
 });
-let Lat, Long;
+let Lat, Long, covidNews = 0;
 navigator.geolocation.getCurrentPosition(function success(position) {
   Lat = position.coords.latitude;
   Long = position.coords.longitude;
@@ -25,13 +25,13 @@ navigator.geolocation.getCurrentPosition(function success(position) {
 
       success: function (result) {
         if (result.status.name == "ok") {
+          console.log(result);
           if(change==1) {
             userLat = result['data']['capital'][1][0]['latitude'];
             userLong = result['data']['capital'][1][0]['longitude'];
           }
           
           const iso2 = result['data']['location']['results'][0]['components']['ISO_3166-1_alpha-2'];
-          console.log(result);
 
           let countryBorders;
           countryBorders = L.geoJSON(result['data']['countryBorder'],
@@ -59,14 +59,6 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           }
           placesList += '</dl>';
           $('#places').html(placesList);
-
-          /*--------------------- COVID-19 NEWS ---------------------*/
-          let covidNewsList = '';
-          for (let covA = 0; covA < result['data']['covidNews']['news'].length; covA++) {
-            covidNewsList += `<dt>${result['data']['covidNews']['news'][covA]['reference'].toUpperCase()}</dt><dd><a href="${result['data']['covidNews']['news'][covA]['link']}" target="_blank">${result['data']['covidNews']['news'][covA]['title']}</a></dd>`;
-          }
-          $('.covidArticles').html(covidNewsList);
-
           /*--------------------- POPULATION INFO ---------------------*/
           $('#regionAnswer').html(result['data']['population']['region']);
           let getPopulation;
@@ -121,8 +113,9 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           $('#allNews').html(newsList);
 
           /*--------------------- COVID-19 SECTION ---------------------*/
+         
           $('.covidHeader').html(`<img src="libs/img/covid.png" alt="covid" title="COVID-19"><h2>COVID-19</h2>`);
-          if (result['data']['covidStats']) {
+           if (result['data']['covidStats']) {
             function spreadN(s) {
               if (s > 0) {
                 const string = s.toString();
@@ -134,49 +127,23 @@ navigator.geolocation.getCurrentPosition(function success(position) {
                 return '0';
               }
             }
-            const covidData = result['data']['covidStats']['data'];
-            const confirmed = covidData['latest_data']['confirmed'];
-            const critical = covidData['timeline'][0]['active'];
-            const deaths = covidData['latest_data']['deaths'];
-            const recovered = covidData['latest_data']['recovered'];
-            const newConfirmed = covidData['today']['confirmed'];
-            const newDeaths = covidData['today']['deaths'];
-            let deathRate;
-            if (covidData['latest_data']['calculated']['death_rate']) {
-              deathRate = covidData['latest_data']['calculated']['death_rate'].toString();
-            } else {
-              deathRate = '0';
-            }
-
-            const casesMln = covidData['latest_data']['calculated']['cases_per_million_population'];
-            let showConfirmed, showDeaths, covidChange;
-            if (newConfirmed == 0) {
-              showConfirmed = '';
-              covidChange = '';
-            } else {
-              covidChange = "class=\"covidChange\"";
-              showConfirmed = '+' + spreadN(newConfirmed);
-            }
-            if (newDeaths == 0) {
-              showDeaths = '';
-              covidChange = '';
-            } else {
-              covidChange = "class=\"covidChange\"";
-              showDeaths = '+' + spreadN(newDeaths);
-            }
-            $('.covidCountry').html(`<span class="covidE">Confirmed: </span><b>${spreadN(confirmed)}</b> <span ${covidChange}>${showConfirmed}</span><br>
+            const covidData = result['data']['covidStats'][0];
+            const confirmed = covidData['confirmed'];
+            const critical = confirmed-(covidData['deaths']+covidData['recovered']);
+            const deaths = covidData['deaths'];
+            const recovered = covidData['recovered'];
+            const deathRate = deaths/confirmed;
+            $('.covidCountry').html(`<span class="covidE">Confirmed: </span><b>${spreadN(confirmed)}</b><br>
                     <span class="covidE">Active: </span><b>${spreadN(critical)}</b><br>
                     <span class="covidE">Recovered: </span><span id="recovered">${spreadN(recovered)}</span><br>
-                    <span class="covidE">Deaths: </span><span id="dead">${spreadN(deaths)}</span> <span ${covidChange}>${showDeaths}</span><br>
-                    <span class="covidE">Death rate: </span><b>${deathRate.substr(0, 4)}</b><br>
-                    <span class="covidE">Cases / mln: </span><b>${spreadN(casesMln)}</b>`);
+                    <span class="covidE">Deaths: </span><span id="dead">${spreadN(deaths)}</span><br>
+                    <span class="covidE">Death rate: </span><b>${Math.round(deathRate * 100)/100} %</b>`);
 
-            $('.covidCountry2').html(`<div id="covidLeftB"><span class="covidE">Confirmed: </span><b>${spreadN(confirmed)}</b> <span ${covidChange}>${showConfirmed}</span><br>
+            $('.covidCountry2').html(`<div id="covidLeftB"><span class="covidE">Confirmed: </span><b>${spreadN(confirmed)}</b><br>
                     <span class="covidE">Active: </span><b>${spreadN(critical)}</b><br>
                     <span class="covidE">Recovered: </span><span id="recovered">${spreadN(recovered)}</span></div>
-                    <div id="covidRightB"><span class="covidE">Deaths: </span><span id="dead">${spreadN(deaths)}</span> <span ${covidChange}>${showConfirmed}</span><br>
-                    <span class="covidE">Death rate: </span><b>${deathRate.substr(0, 4)}</b><br>
-                    <span class="covidE">Cases / mln: </span><b>${spreadN(casesMln)}</b></div>`);
+                    <div id="covidRightB"><span class="covidE">Deaths: </span><span id="dead">${spreadN(deaths)}</span><br>
+                    <span class="covidE">Death rate: </span><b>${Math.round(deathRate * 100)/100} %</b>`);
           } else {
             $('#covidCountry').html(`Information about this country is not available.`);
             $('#covidCountry2').html(`Information about this country is not available.`);
@@ -256,7 +223,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
                 request: 18
               },
               success: function (chosenC) {
-                console.log(chosenC);
+            
                 if (chosenC.status.name == "ok") {
                   $('#exResult').html(`${chosenC['data']['conversion_rate']} ${chosenCur}`);
                 }
@@ -266,32 +233,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             });
 
           });
-          /*--------------------- CITIES ---------------------*/
-          let markers;
-          markers = L.markerClusterGroup();
-
-          let checkCitiesLayer, btnCities;
-          let allCities = result['data']['cities']['data']['cities'];
-          let weatherCities = [];
-
-          let cityIcon = L.icon({
-            iconUrl: 'libs/img/cityMarker.png',
-            iconSize: [40, 40],
-            iconAnchor: [20, 40],
-            popupAnchor: [1, -40]
-          });
-
-          for (let ci = 0; ci < allCities.length; ci++) {
-            markers.addLayer(L.marker([allCities[ci]['latitude'], allCities[ci]['longitude']], { icon: cityIcon }).bindPopup(allCities[ci]['name']));
-
-            if (allCities.length > 19) {
-              if (ci < 19) {
-                weatherCities.push(allCities[ci]);
-              }
-            } else {
-              weatherCities.push(allCities[ci]);
-            }
-          }
+       
           /*--------------------- AIRPORTS SECTION ---------------------*/
           let checkAirportsLayer;
           let allAirports = result['data']['airports']['data'];
@@ -306,7 +248,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             airportsMarkers.push(L.marker([allAirports[ai]['location']['latitude'], allAirports[ai]['location']['longitude']], { icon: airportIcon }).bindPopup(allAirports[ai]['name']['original']));
           }
           let airportsLayer = L.layerGroup(airportsMarkers);
-          /*--------------------- WEATHER ON THE MAP ---------------------*/
+          /*--------------------- WEATHER ON THE MAP ---------------------*/ 
           let allWeather = result['data']['citiesWeather']['list'];
           let weatherMarkers = [];
           let weatherIcon;
@@ -389,7 +331,10 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             }
           }).addTo(map);
           bordersButton.button.style.backgroundColor = 'gold';
-
+   /*--------------------- CITIES ---------------------*/
+   let markers, requestCities = 0;
+   markers = L.markerClusterGroup();
+   let checkCitiesLayer, btnCities;
           let citiesEasyButoon = L.easyButton('<img src="libs/img/city.png" alt="cities" title="Biggest Cities" id="cityImg">', function (btn) {
             btnCities = btn;
             if (checkCitiesLayer) {
@@ -399,6 +344,10 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             } else {
               checkCitiesLayer = map.addLayer(markers);
               btnCities.button.style.backgroundColor = 'gold';
+              if(requestCities == 0) {
+                getCities();
+                requestCities = 1;
+              }
             }
           }).addTo(map);
           $('#cities').on('click', () => {
@@ -408,8 +357,38 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             $('#scrollDown').toggle();
             checkCitiesLayer = map.addLayer(markers);
             citiesEasyButoon.button.style.backgroundColor = 'gold';
+            if(requestCities == 0) {
+              getCities();
+              requestCities = 1;
+            }
           });
-
+          function getCities() {
+            $.ajax({
+              url: "libs/php/cities.php",
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                iso2: result['data']['location']['results'][0]['components']['ISO_3166-1_alpha-2']
+              },
+              success: function (citiesResult) {
+                 if (citiesResult.status.name == "ok") {
+          let allCities = citiesResult['data']['cities']['data']['cities'];
+        
+            let cityIcon = L.icon({
+              iconUrl: 'libs/img/cityMarker.png',
+              iconSize: [40, 40],
+              iconAnchor: [20, 40],
+              popupAnchor: [1, -40]
+            });
+         
+            for (let ci = 0; ci < allCities.length; ci++) {
+              markers.addLayer(L.marker([allCities[ci]['latitude'], allCities[ci]['longitude']], { icon: cityIcon }).bindPopup(allCities[ci]['name']));
+         
+            } 
+          }} , error: function (jqXHR, textStatus, errorThrown) {
+            console.log((jqXHR + '<br/>' + textStatus + '<br/>' + errorThrown));
+          }});
+          }
           let airportsEasyButoon = L.easyButton(`<img src="libs/img/airports.png" alt="airports" title="Country Info" id="airportsImg">`, function (btn) {
             let btnAirports = btn;
             if (checkAirportsLayer) {
@@ -442,9 +421,39 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
               btnWeather.button.style.backgroundColor = 'gold';
             }
           }).addTo(map);
+          $('#covidB').on('click', () => {
+            $('#covidModal').modal('show');
+            if(covidNews == 0) {
+              getCovidNews();
+                 covidNews = 1;
+              }
+          });
           let covidButton = L.easyButton('<img src="libs/img/covid.png" alt="covid" title="COVID-19" id="covidImg">', function () {
             $('#covidModal').modal('show');
+          if(covidNews == 0) {
+            getCovidNews();
+               covidNews = 1;
+            }
           }).addTo(map);
+           /*--------------------- COVID-19 NEWS ---------------------*/ 
+          function getCovidNews() {
+            $.ajax({
+              url: "libs/php/covidNews.php",
+              type: 'POST',
+              dataType: 'json',
+
+              success: function (covidResult) {
+                 if (covidResult.status.name == "ok") {
+
+                  let covidNewsList = '';
+                  for (let covA = 0; covA < covidResult['data']['covidNews']['news'].length; covA++) {
+                      covidNewsList += `<dt>${covidResult['data']['covidNews']['news'][covA]['reference'].toUpperCase()}</dt><dd><a href="${covidResult['data']['covidNews']['news'][covA]['link']}" target="_blank">${covidResult['data']['covidNews']['news'][covA]['title']}</a></dd>`;
+                    }
+                  $('.covidArticles').html(covidNewsList);
+                  }
+             }}); 
+            }
+
           let rubberButton = L.easyButton(`<img src="libs/img/rubber.png" alt="rubber" title="Clean the map" id="rubberImg">`, function () {
             weatherButton.button.style.backgroundColor = null;
             airportsEasyButoon.button.style.backgroundColor = null;
@@ -482,8 +491,6 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             map.removeControl(weatherButton);
             map.removeControl(covidButton);
             map.removeControl(rubberButton);
-            $('#info').show();
-            $('#infoTop').hide();
             if (weatherLayer) {
               weatherLayer.remove();
               checkWeatherLayer = null;
@@ -559,9 +566,7 @@ $.ajax({
 $('#newsB').on('click', () => {
   $('#newsModal').modal('show');
 });
-$('#covidB').on('click', () => {
-  $('#covidModal').modal('show');
-});
+
 $('#placesB').on('click', () => {
   $('#placesModal').modal('show');
 });
