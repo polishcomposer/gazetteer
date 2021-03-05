@@ -244,7 +244,10 @@ text-transform: uppercase;
     flex-wrap:wrap;
     justify-content:space-evenly;
 }
-
+#holidayDescription dd {
+    margin-left:20px;
+    font-style:italic;
+}
 #forecastBox {
     text-align:center;
 }
@@ -272,6 +275,10 @@ text-transform: uppercase;
     display:flex;
     align-content:space-between;
     align-items: center;
+}
+.modal-body {
+max-height: 70vh;
+overflow-y: auto;
 }
 #covidBottom {
     padding:10px;
@@ -326,6 +333,7 @@ text-transform: uppercase;
     margin-left:20px;
       font-style:italic;
 }
+
 #recovered {
     color:green;
     font-weight:bold;
