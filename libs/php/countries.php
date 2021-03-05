@@ -5,12 +5,15 @@ $executionStartTime = microtime(true) / 1000;
 $countries = file_get_contents('../js/countryBorders.geo.json');
    $countriesInfo = []; 
 	$decodedBorders = json_decode($countries, TRUE);
-    foreach($decodedBorders['features'] as $key => $value) {
-        if($value['properties']['iso_a2']!=-99) {
-            $countriesInfo[$value['properties']['iso_a2']] = $value['properties']['name'];
-        }
+    $records = $decodedBorders['features'];
+   for($a=0; $a<count($records); $a++) {
+        if($records[$a]['properties']['iso_a2']!=-99) {
+            array_push($countriesInfo, [$records[$a]['properties']['iso_a2'], $records[$a]['properties']['name']]);
+       }
     }
-    asort($countriesInfo);
+    usort($countriesInfo, function($a, $b) {
+        return strcasecmp($a[1], $b[1]);
+      });
 $output['status']['code'] = "200";
 $output['status']['name'] = "ok";
 $output['status']['description'] = "mission saved";

@@ -67,9 +67,20 @@ $ch14 = curl_init();
 		curl_setopt($ch5, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch5, CURLOPT_URL,'https://restcountries.eu/rest/v2/alpha/' . $iso2);
 
-        curl_setopt($ch6, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch6, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch6, CURLOPT_URL,'https://calendarific.com/api/v2/holidays?&api_key=2adeac4fe82f4d26180b4fba95220aaae0cf7cc8&country=' . $iso2 . '&year=2021');
+		curl_setopt_array($ch6, [
+			CURLOPT_URL => 'https://public-holiday.p.rapidapi.com/2021/'. $iso2,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_ENCODING => "",
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => "GET",
+			CURLOPT_HTTPHEADER => [
+				"x-rapidapi-host: public-holiday.p.rapidapi.com",
+				"x-rapidapi-key: a2b8543599msh61f31ce8dd35036p1daae4jsn21bf23979fc2"
+			],
+		]);
         
 		curl_setopt($ch7, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch7, CURLOPT_RETURNTRANSFER, true);
