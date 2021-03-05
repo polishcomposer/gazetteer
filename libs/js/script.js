@@ -5,7 +5,7 @@ $(window).on('load', function () {
     });
   }
 });
-let Lat, Long, covidNews = 0;
+let Lat, Long, marker, countryBorders, covidNews = 0;
 navigator.geolocation.getCurrentPosition(function success(position) {
   Lat = position.coords.latitude;
   Long = position.coords.longitude;
@@ -25,7 +25,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
 
       success: function (result) {
         if (result.status.name == "ok") {
-        
+
           if(change==1) {
             userLat = result['data']['capital'][1][0]['latitude'];
             userLong = result['data']['capital'][1][0]['longitude'];
@@ -33,7 +33,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           
           const iso2 = result['data']['location']['results'][0]['components']['ISO_3166-1_alpha-2'];
 
-          let countryBorders;
+          if(!countryBorders) {
           countryBorders = L.geoJSON(result['data']['countryBorder'],
             {
               style: {
@@ -43,15 +43,58 @@ navigator.geolocation.getCurrentPosition(function success(position) {
               }
             }).addTo(map);
           map.fitBounds(countryBorders.getBounds());
+          }
+          let markerText;
+          if(change == 1) {
+            markerText = result['data']['population']['capital'];
+          } else {
+            markerText = `You are here: <b>${result['data']['location']['results'][0]['formatted']}</b>`;
+          }
           let homeIcon = L.icon({
             iconUrl: 'libs/img/homeMarker.png',
             iconSize: [40, 40],
             iconAnchor: [20, 40],
             popupAnchor: [1, -40]
           });
-          let marker = L.marker([userLat, userLong], { icon: homeIcon }).addTo(map);
-          let markerText = `You are here: <b>${result['data']['location']['results'][0]['formatted']}</b>`;
+          if(!marker) {
+         marker = L.marker([userLat, userLong], { icon: homeIcon }).addTo(map);
           marker.bindPopup(markerText).openPopup();
+        }
+          /*--------------------- MAP BUTTONS ---------------------*/
+          let homeButton = L.easyButton('<img src="libs/img/home.png" alt="home" title="Home Location" id="homeImg">', function (btn) {
+            let btnMarker = btn;
+            if (marker) {
+              map.removeLayer(marker);
+              btnMarker.button.style.backgroundColor = null;
+              marker = null;
+              
+          
+            } else {
+              btnMarker.button.style.backgroundColor = 'gold';
+              marker = L.marker([userLat, userLong], { icon: homeIcon }).bindPopup(markerText).addTo(map);
+            }
+          }).addTo(map);
+          homeButton.button.style.backgroundColor = 'gold';
+
+          let bordersButton = L.easyButton(`<img src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="info" title="Country Info" id="flagImg">`, function (btn) {
+            let btnBorders = btn;
+            if (countryBorders) {
+              map.removeLayer(countryBorders);
+              btnBorders.button.style.backgroundColor = null;
+              countryBorders = null;
+            } else {
+              btnBorders.button.style.backgroundColor = 'gold';
+              countryBorders = L.geoJSON(result['data']['countryBorder'],
+                {
+                  style: {
+                    "color": "gold",
+                    "weight": 3,
+                    "opacity": 0.85
+                  }
+                }).addTo(map);
+            }
+          }).addTo(map);
+          bordersButton.button.style.backgroundColor = 'gold';
           /*--------------------- PLACES INFO ---------------------*/
           let placesList = '<dl>';
           for (let plA = 0; plA < result['data']['places']['geonames'].length; plA++) {
@@ -96,10 +139,12 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           }
 
           $('#countryHeader').html(`<img src="https://www.countryflags.io/${iso2}/shiny/64.png"><h2>${result['data']['location']['results'][0]['components']['country']}</h2>`);
-          if (viewCapital == '') {
+          if (change != 1) {
             $('#userLocationWithFlag').html(`<span class="what">Your location:</span><span class="answer" > ${result['data']['location']['results'][0]['formatted']}</span><br>`);
+          } else {
+            $('#userLocationWithFlag').html(``);
           }
-          $('#timezoneAnswer').html(result['data']['location']['results'][0]['annotations']['timezone']['name']);
+            $('#timezoneAnswer').html(result['data']['location']['results'][0]['annotations']['timezone']['name']);
 
           /*--------------------- NEWS SECTION ---------------------*/
           let getNews = result['data']['News']['data'];
@@ -115,7 +160,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           /*--------------------- COVID-19 SECTION ---------------------*/
          
           $('.covidHeader').html(`<img src="libs/img/covid.png" alt="covid" title="COVID-19"><h2>COVID-19</h2>`);
-           if (result['data']['covidStats']) {
+           if (result['data']['covidStats'][0]) {
             function spreadN(s) {
               if (s > 0) {
                 const string = s.toString();
@@ -148,21 +193,16 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             $('#covidCountry').html(`Information about this country is not available.`);
             $('#covidCountry2').html(`Information about this country is not available.`);
           }
-          /*--------------------- HOLIDAYS ---------------------*/
-          let holidaysList = `<select id="selectHolidays" class="holidaysList">
-<option value="" disabled selected>Holidays</option>`;
-          let holidaysRecords = result['data']['holidays']['response']['holidays'];
-          for (let h = 0; h < holidaysRecords.length; h++) {
-            holidaysList += `<option value="${h}">${holidaysRecords[h]['name']}</option>`;
-          }
-          holidaysList += '</select>';
-          $('#selectHoliday').html(holidaysList);
-          $('#selectHolidays').change(function () {
-            let chosenHoliday = holidaysRecords[$(this).val()];
-            $('#holidayName').html(chosenHoliday['name']);
-            $('#holidayDescription').html(`<span class="weatherE">Date: </span><b>${chosenHoliday['date']['iso']}</b><br>${chosenHoliday['description']}`);
-            $('#holidayModal').modal('show');
-          });
+          /*--------------------- HOLIDAYS ---------------------*/ 
+            let countryHolidays = result['data']['holidays'];
+            let holidaysList = '<dl>';
+            $('#holidayName').html('Holidays in ' + result['data']['location']['results'][0]['components']['country']);
+            for(let h = 0; h<result['data']['holidays'].length; h++) {
+              holidaysList += `<dt>${countryHolidays[h]['date']}</dt><dd> Name: ${countryHolidays[h]['name']}, (Local Name: ${countryHolidays[h]['localName']})</dd>`;
+            }
+            holidaysList += '</dl>';
+            $('#holidayDescription').html(holidaysList);
+        
           /*--------------------- COUNTRY IMG ---------------------*/
           let photo;
           if (result['data']['countryImg']['total'] < 2) {
@@ -187,9 +227,13 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             }
           }
           $('#neighbours').html(neighbours);
-          $('#advise').html(`<br><span class="weatherE">Travel Advise: </span><b>${travelInfo['advise']['CA']['advise']}, ${travelInfo['advise']['UA']['advise']}</b>`);
+          if(travelInfo['advise']['CA']['advise']) {
+            $('#advise').html(`<br><span class="weatherE">Travel Advise: </span><b>${travelInfo['advise']['CA']['advise']}, ${travelInfo['advise']['UA']['advise']}</b>`);
+          }
+        
 
           /*--------------------- CURRENCY SECTION ---------------------*/
+         if(result['data']['location']['results'][0]['annotations']['currency']) {
           let currencyInfo = result['data']['location']['results'][0]['annotations']['currency'];
           let selectCurrency = '<select id="selectC">';
           selectCurrency += '<option value="" disabled selected>Choose currency</option>';
@@ -198,19 +242,12 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           }
           selectCurrency += '</select>';
           let base;
-          if (viewCapital == 'Kosovo') {
-            $('#currencyData').html(`<div><span class="currencyE">Name: </span><b>Euro (EUR)</b><br>
-<span class="currencyE">Symbol: </span><b>€</b><br>
-<span class="currencyE">Subunit: </span><b>Cent</b><br></div>
-<div id="curBox"><div id="convertCurrency"><b>Exchange rate:</b><br><div id="calculation">1 EUR = <span id="exResult">?</span></div><br>${selectCurrency}</div><div>`);
-            base = 'EUR';
-          } else {
             $('#currencyData').html(`<div><span class="currencyE">Name: </span><b>${currencyInfo['name']} (${currencyInfo['iso_code']})</b><br>
 <span class="currencyE">Symbol: </span><b>${currencyInfo['symbol']}</b><br>
 <span class="currencyE">Subunit: </span><b>${currencyInfo['subunit']}</b><br></div>
 <div id="curBox"><div id="convertCurrency"><b>Exchange rate:</b><br><div id="calculation">1 ${currencyInfo['iso_code']} = <span id="exResult">?</span></div><br>${selectCurrency}</div><div>`);
             base = currencyInfo['iso_code'];
-          }
+          
           $('#selectC').change(function () {
             let chosenCur = $(this).val();
             $.ajax({
@@ -233,7 +270,9 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             });
 
           });
-       
+        } else {
+          $('#currencyData').html(`Information about currency is not available.`);
+        }
           /*--------------------- AIRPORTS SECTION ---------------------*/
           let checkAirportsLayer;
           let allAirports = result['data']['airports']['data'];
@@ -244,6 +283,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             iconAnchor: [20, 40],
             popupAnchor: [1, -40]
           });
+          
           for (let ai = 0; ai < allAirports.length; ai++) {
             airportsMarkers.push(L.marker([allAirports[ai]['location']['latitude'], allAirports[ai]['location']['longitude']], { icon: airportIcon }).bindPopup(allAirports[ai]['name']['original']));
           }
@@ -298,39 +338,7 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
 </div>`;
           }
           $('#weatherBoxes').html(forecastDays);
-          /*--------------------- MAP BUTTONS ---------------------*/
-          let homeButton = L.easyButton('<img src="libs/img/home.png" alt="home" title="Home Location" id="homeImg">', function (btn) {
-            let btnMarker = btn;
-            if (marker) {
-              map.removeLayer(marker);
-              btnMarker.button.style.backgroundColor = null;
-              marker = null;
-            } else {
-              btnMarker.button.style.backgroundColor = 'gold';
-              marker = L.marker([userLat, userLong], { icon: homeIcon }).bindPopup(markerText).addTo(map);
-            }
-          }).addTo(map);
-          homeButton.button.style.backgroundColor = 'gold';
-
-          let bordersButton = L.easyButton(`<img src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="info" title="Country Info" id="flagImg">`, function (btn) {
-            let btnBorders = btn;
-            if (countryBorders) {
-              map.removeLayer(countryBorders);
-              btnBorders.button.style.backgroundColor = null;
-              countryBorders = null;
-            } else {
-              btnBorders.button.style.backgroundColor = 'gold';
-              countryBorders = L.geoJSON(result['data']['countryBorder'],
-                {
-                  style: {
-                    "color": "gold",
-                    "weight": 3,
-                    "opacity": 0.85
-                  }
-                }).addTo(map);
-            }
-          }).addTo(map);
-          bordersButton.button.style.backgroundColor = 'gold';
+          
    /*--------------------- CITIES ---------------------*/
    let markers, requestCities = 0;
    markers = L.markerClusterGroup();
@@ -421,6 +429,9 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
               btnWeather.button.style.backgroundColor = 'gold';
             }
           }).addTo(map);
+          $('#holidaysB').on('click', () => {
+            $('#holidayModal').modal('show');
+          });
           $('#covidB').on('click', () => {
             $('#covidModal').modal('show');
             if(covidNews == 0) {
@@ -460,6 +471,7 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             citiesEasyButoon.button.style.backgroundColor = null;
             homeButton.button.style.backgroundColor = null;
             bordersButton.button.style.backgroundColor = null;
+            
             if (weatherLayer) {
               weatherLayer.remove();
               checkWeatherLayer = null;
@@ -482,40 +494,39 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             }
 
           }).addTo(map);
-          /*--------------------- COUNTRIES LIST CHANGE EVENT ---------------------*/
-          $('.countriesList').change(function () {
-            map.removeControl(homeButton);
-            map.removeControl(bordersButton);
-            map.removeControl(citiesEasyButoon);
-            map.removeControl(airportsEasyButoon);
-            map.removeControl(weatherButton);
-            map.removeControl(covidButton);
-            map.removeControl(rubberButton);
-            if (weatherLayer) {
-              weatherLayer.remove();
-              checkWeatherLayer = null;
-            }
-            if (checkAirportsLayer) {
-              airportsLayer.remove();
-              checkAirportsLayer = null;
-            }
-            if (checkCitiesLayer) {
-              map.removeLayer(markers);
-              checkCitiesLayer = null;
-            }
-            if (countryBorders) {
-              countryBorders.remove();
-              countryBorders = null;
-            }
-            if (marker) {
-              marker.remove();
-              marker = null;
-            }
+   
+       /*--------------------- COUNTRIES LIST CHANGE EVENT ---------------------*/
+       $('.countriesList').change(function () {
+        map.removeControl(homeButton);
+        map.removeControl(bordersButton);
+        map.removeControl(citiesEasyButoon);
+        map.removeControl(airportsEasyButoon);
+        map.removeControl(weatherButton);
+        map.removeControl(covidButton);
+        map.removeControl(rubberButton);
+        if (weatherLayer) {
+          weatherLayer.remove();
+          checkWeatherLayer = null;
+        }
+        if (checkAirportsLayer) {
+          airportsLayer.remove();
+          checkAirportsLayer = null;
+        }
+        if (checkCitiesLayer) {
+          map.removeLayer(markers);
+          checkCitiesLayer = null;
+        }
+        if (countryBorders) {
+          countryBorders.remove();
+          countryBorders = null;
+        }
+        if (marker) {
+          map.removeLayer(marker);
+          marker = null;
+        }
+        requests(1, Lat, Long, $(this).val());
 
-            requests(1, Lat, Long, $(this).val());
-
-          });
-
+      });
         }
       }, error: function (jqXHR, textStatus, errorThrown) {
         console.log((jqXHR + '<br/>' + textStatus + '<br/>' + errorThrown));
@@ -523,9 +534,8 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
     });
   }
 });
-
+       
 /*--------------------- MAP ELEMENTS ---------------------*/
-
 var map = L.map('map');
 const streetsView = L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
 const imageryView = L.tileLayer.provider('Esri.WorldImagery');
@@ -550,9 +560,10 @@ $.ajax({
       let countries = '<select id="countriesList" class="countriesList">';
       let selected = '';
       countries += '<option value="" disabled selected>Select country</option>';
-      for (let [key, value] of Object.entries(selectRequest['data'])) {
-        countries += `<option value='${key}' ${selected}>${value}</option>`;
+      for (let sel=0; sel<171; sel++) {
+        countries += `<option value='${selectRequest['data'][sel][0]}' ${selected}>${selectRequest['data'][sel][1]}</option>`;
       };
+      
       countries += "</select>";
       document.getElementById('selectCountry').innerHTML = countries;
       document.getElementById('infoSelectCountry').innerHTML = countries;
@@ -581,7 +592,6 @@ $('#show').on('click', () => {
   $('#info').slideToggle();
   $('#infoTop').fadeToggle();
   $('#cloak').fadeToggle();
-
   $('#scrollDown').toggle();
 });
 
