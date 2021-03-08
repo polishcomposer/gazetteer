@@ -5,7 +5,7 @@ $(window).on('load', function () {
     });
   }
 });
-let Lat, Long, marker, countryBorders, covidNews = 0;
+let Lat, Long, marker, countryBorders, homeButton, bordersButton, citiesEasyButoon, airportsEasyButoon, weatherButton, covidButton, rubberButton, covidNews = 0;
 navigator.geolocation.getCurrentPosition(function success(position) {
   Lat = position.coords.latitude;
   Long = position.coords.longitude;
@@ -61,7 +61,8 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           marker.bindPopup(markerText).openPopup();
         }
           /*--------------------- MAP BUTTONS ---------------------*/
-          let homeButton = L.easyButton('<img src="libs/img/home.png" alt="home" title="Home Location" id="homeImg">', function (btn) {
+         
+          homeButton = L.easyButton('<img src="libs/img/home.png" alt="home" title="Home Location" id="homeImg">', function (btn) {
             let btnMarker = btn;
             if (marker) {
               map.removeLayer(marker);
@@ -75,8 +76,9 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             }
           }).addTo(map);
           homeButton.button.style.backgroundColor = 'gold';
+        
 
-          let bordersButton = L.easyButton(`<img src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="info" title="Country Info" id="flagImg">`, function (btn) {
+          bordersButton = L.easyButton(`<img src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="info" title="Country Info" id="flagImg">`, function (btn) {
             let btnBorders = btn;
             if (countryBorders) {
               map.removeLayer(countryBorders);
@@ -205,7 +207,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
         
           /*--------------------- COUNTRY IMG ---------------------*/
           let photo;
-          if (result['data']['countryImg']['total'] < 2) {
+          if (!result['data']['countryImg'] || result['data']['countryImg']['total'] < 2) {
             photo = 'libs/img/journey.jpg';
           } else {
             photo = result['data']['countryImg']['hits'][1]['webformatURL'];
@@ -228,8 +230,9 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           }
           $('#neighbours').html(neighbours);
           if(travelInfo['advise']['CA']['advise']) {
-            $('#advise').html(`<br><span class="weatherE">Travel Advise: </span><b>${travelInfo['advise']['CA']['advise']}, ${travelInfo['advise']['UA']['advise']}</b>`);
-          }
+            $('#advise').html(`<br><span class="weatherE">Travel Advise: </span><b>${travelInfo['advise']['CA']['advise']}</b>`);
+          } 
+        
         
 
           /*--------------------- CURRENCY SECTION ---------------------*/
@@ -320,7 +323,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           } else {
             timeLong = 5;
           }
-          $('#weatherToday').html(`<div id="todayWLeft"><h2>Weather</h2><span id="todayD">${myTime.substr(0, timeLong)}${myTime.substr(-2, 2).toLowerCase()}, ${myDate.substr(4, 6)}</span><div id="todayDown"><img src="http://openweathermap.org/img/w/${currentW['weather'][0]['icon']}.png" id="todayWeatherImg" alt="Weather Today">
+          $('#weatherToday').html(`<div id="todayWLeft"><h2>Weather</h2><span id="todayD">${myTime.substr(0, timeLong)}, ${myDate.substr(4, 6)}</span><div id="todayDown"><img src="http://openweathermap.org/img/w/${currentW['weather'][0]['icon']}.png" id="todayWeatherImg" alt="Weather Today">
 <span id="todayWeatherTemp">${Math.round(currentW['temp'])}<sup>o</sup>C</span><br>
 <span id="todayWeatherDesc">${currentW['weather'][0]['description']}</div></div>
 <div id="todayWRight"><span class="weatherE">Feels like: </span><b>${Math.round(currentW['feels_like'])}<sup>o</sup>C</b><br><span class="weatherE">Humidity: </span><b>${currentW['humidity']}%</b><br>
@@ -343,7 +346,7 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
    let markers, requestCities = 0;
    markers = L.markerClusterGroup();
    let checkCitiesLayer, btnCities;
-          let citiesEasyButoon = L.easyButton('<img src="libs/img/city.png" alt="cities" title="Biggest Cities" id="cityImg">', function (btn) {
+          citiesEasyButoon = L.easyButton('<img src="libs/img/city.png" alt="cities" title="Biggest Cities" id="cityImg">', function (btn) {
             btnCities = btn;
             if (checkCitiesLayer) {
               map.removeLayer(markers);
@@ -397,7 +400,7 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             console.log((jqXHR + '<br/>' + textStatus + '<br/>' + errorThrown));
           }});
           }
-          let airportsEasyButoon = L.easyButton(`<img src="libs/img/airports.png" alt="airports" title="Country Info" id="airportsImg">`, function (btn) {
+          airportsEasyButoon = L.easyButton(`<img src="libs/img/airports.png" alt="airports" title="Country Info" id="airportsImg">`, function (btn) {
             let btnAirports = btn;
             if (checkAirportsLayer) {
               map.removeLayer(airportsLayer);
@@ -418,7 +421,7 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
           });
 
           let checkWeatherLayer;
-          let weatherButton = L.easyButton(`<img src="libs/img/weather.png" alt="weather" title="Weather info" id="weatherImg">`, function (btn) {
+          weatherButton = L.easyButton(`<img src="libs/img/weather.png" alt="weather" title="Weather info" id="weatherImg">`, function (btn) {
             let btnWeather = btn;
             if (checkWeatherLayer) {
               map.removeLayer(weatherLayer);
@@ -439,7 +442,7 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
                  covidNews = 1;
               }
           });
-          let covidButton = L.easyButton('<img src="libs/img/covid.png" alt="covid" title="COVID-19" id="covidImg">', function () {
+          covidButton = L.easyButton('<img src="libs/img/covid.png" alt="covid" title="COVID-19" id="covidImg">', function () {
             $('#covidModal').modal('show');
           if(covidNews == 0) {
             getCovidNews();
@@ -457,15 +460,17 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
                  if (covidResult.status.name == "ok") {
 
                   let covidNewsList = '';
+                  if(covidResult['data']['covidNews']) {
                   for (let covA = 0; covA < covidResult['data']['covidNews']['news'].length; covA++) {
                       covidNewsList += `<dt>${covidResult['data']['covidNews']['news'][covA]['reference'].toUpperCase()}</dt><dd><a href="${covidResult['data']['covidNews']['news'][covA]['link']}" target="_blank">${covidResult['data']['covidNews']['news'][covA]['title']}</a></dd>`;
                     }
                   $('.covidArticles').html(covidNewsList);
                   }
+                }
              }}); 
             }
 
-          let rubberButton = L.easyButton(`<img src="libs/img/rubber.png" alt="rubber" title="Clean the map" id="rubberImg">`, function () {
+          rubberButton = L.easyButton(`<img src="libs/img/rubber.png" alt="rubber" title="Clean the map" id="rubberImg">`, function () {
             weatherButton.button.style.backgroundColor = null;
             airportsEasyButoon.button.style.backgroundColor = null;
             citiesEasyButoon.button.style.backgroundColor = null;
@@ -504,6 +509,13 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
         map.removeControl(weatherButton);
         map.removeControl(covidButton);
         map.removeControl(rubberButton);
+        homeButton = null;
+        bordersButton = null;
+        citiesEasyButoon = null;
+        airportsEasyButoon = null;
+        weatherButton = null;
+        covidButton = null;
+        rubberButton = null;
         if (weatherLayer) {
           weatherLayer.remove();
           checkWeatherLayer = null;
