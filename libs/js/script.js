@@ -1,3 +1,4 @@
+
 $(window).on('load', function () {
   if ($('#preloader').length) {
     $('#preloader').delay(1000).fadeOut('slow', function () {
@@ -637,4 +638,3 @@ $('#homeLocation').on('click', () => {
 });
 $('#homeLocation2').on('click', () => {
   window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname;
-});

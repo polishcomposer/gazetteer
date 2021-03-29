@@ -6,6 +6,7 @@ body {
 }
 /* --- preloader --- */
 
+
 .preloader_map {
     width: 100%; 
     height:100%; 
@@ -47,6 +48,7 @@ body {
     animation: animate-preloader 1s linear infinite;
 }
 
+
 #preloader {
     width:100%;
     height:100%;  
@@ -80,9 +82,12 @@ body {
 #preTitle::first-letter {
     font-size: 80px;
 }
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 02ee4b867dd65c915f884c3ffc09e6e17948628e
 @-webkit-keyframes animate-preloader {
     0% {
         -webkit-transform: rotate(0deg);
