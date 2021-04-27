@@ -29,6 +29,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
 
       success: function (result) {
         if (result.status.name == "ok") {
+          console.log(result);
           $('#preloader_on_map').removeClass("preloader_map");
           if(change==1) {
             userLat = result['data']['capital'][1][0]['latitude'];
@@ -82,7 +83,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           homeButton.button.style.backgroundColor = 'gold';
         
 
-          bordersButton = L.easyButton(`<img src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="info" title="Country Info" id="flagImg">`, function (btn) {
+          bordersButton = L.easyButton(`<img src="${result['data']['population']['flag']}" alt="info" title="Country Info" id="flagImg">`, function (btn) {
             let btnBorders = btn;
             if (countryBorders) {
               map.removeLayer(countryBorders);
@@ -144,7 +145,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             $('#capitalAnswer').html(result['data']['population']['capital']);
           }
 
-          $('#countryHeader').html(`<img src="https://www.countryflags.io/${iso2}/shiny/64.png"><h2>${result['data']['location']['results'][0]['components']['country']}</h2>`);
+          $('#countryHeader').html(`<img src="${result['data']['population']['flag']}" class="flagPhoto"><h2>${result['data']['location']['results'][0]['components']['country']}</h2>`);
           if (change != 1) {
             $('#userLocationWithFlag').html(`<span class="what">Your location:</span><span class="answer" > ${result['data']['location']['results'][0]['formatted']}</span><br>`);
           } else {
@@ -378,6 +379,8 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             checkCitiesLayer = map.addLayer(markers);
             citiesEasyButoon.button.style.backgroundColor = 'gold';
           });
+
+
           function getCities() {
             $('#preloader_on_map').addClass("preloader_map");
             $.ajax({
@@ -389,8 +392,11 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
               },
               success: function (citiesResult) {
                  if (citiesResult.status.name == "ok") {
+                   console.log(citiesResult);
+                  
                   $('#preloader_on_map').removeClass("preloader_map");
-          let allCities = citiesResult['data']['cities']['data']['cities'];
+                
+          let allCities = citiesResult['data']['cities'];
         
             let cityIcon = L.icon({
               iconUrl: 'libs/img/cityMarker.png',
@@ -400,13 +406,15 @@ ${Math.round(newDay['temp']['max'])} / ${Math.round(newDay['temp']['min'])}<sup>
             });
          
             for (let ci = 0; ci < allCities.length; ci++) {
-              markers.addLayer(L.marker([allCities[ci]['latitude'], allCities[ci]['longitude']], { icon: cityIcon }).bindPopup(allCities[ci]['name']));
-         
+              markers.addLayer(L.marker([allCities[ci]['lat'], allCities[ci]['lng']], { icon: cityIcon }).bindPopup(allCities[ci]['name']));
+        
             } 
           }} , error: function (jqXHR, textStatus, errorThrown) {
             console.log((jqXHR + '<br/>' + textStatus + '<br/>' + errorThrown));
           }});
           }
+
+
           airportsEasyButoon = L.easyButton(`<img src="libs/img/airports.png" alt="airports" title="Country Info" id="airportsImg">`, function (btn) {
             let btnAirports = btn;
             if (checkAirportsLayer) {
@@ -638,3 +646,4 @@ $('#homeLocation').on('click', () => {
 });
 $('#homeLocation2').on('click', () => {
   window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname;
+});

@@ -82,12 +82,6 @@ body {
 #preTitle::first-letter {
     font-size: 80px;
 }
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 02ee4b867dd65c915f884c3ffc09e6e17948628e
 @-webkit-keyframes animate-preloader {
     0% {
         -webkit-transform: rotate(0deg);
@@ -457,6 +451,11 @@ margin-left:10px;
 #countryPhotoId {
     margin-top:5px;
     width:100%;
+    box-shadow: 2px 2px 5px rgb(128, 128, 128);
+}
+.flagPhoto {
+  margin:5px;
+   width:40%;
     box-shadow: 2px 2px 5px rgb(128, 128, 128);
 }
 #countryPhoto {
