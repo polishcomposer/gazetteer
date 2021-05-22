@@ -201,14 +201,14 @@ navigator.geolocation.getCurrentPosition(function success(position) {
             $('#covidCountry2').html(`Information about this country is not available.`);
           }
           /*--------------------- HOLIDAYS ---------------------*/ 
-            let countryHolidays = result['data']['holidays'];
+          /*  let countryHolidays = result['data']['holidays'];
             let holidaysList = '<dl>';
             $('#holidayName').html('Holidays in ' + result['data']['location']['results'][0]['components']['country']);
             for(let h = 0; h<result['data']['holidays'].length; h++) {
               holidaysList += `<dt>${countryHolidays[h]['date']}</dt><dd> Name: ${countryHolidays[h]['name']}, (Local Name: ${countryHolidays[h]['localName']})</dd>`;
             }
             holidaysList += '</dl>';
-            $('#holidayDescription').html(holidaysList);
+            $('#holidayDescription').html(holidaysList); */
         
           /*--------------------- COUNTRY IMG ---------------------*/
           let photo;
@@ -219,12 +219,12 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           }
           $('#countryPhoto').html(`<img src="${photo}" alt="flag" id="countryPhotoId" >`);
           /*--------------------- INFORMATION SECTION ---------------------*/
-          let emergencyText = '<b>Emergency numbers:</b><br>';
+        /*   let emergencyText = '<b>Emergency numbers:</b><br>';
           let travelInfo = result['data']['travelInfo'];
-          for (const [key, value] of Object.entries(travelInfo['telephone'])) {
+         for (const [key, value] of Object.entries(travelInfo['telephone'])) {
             emergencyText += `<span class="weatherE">${key}: </span><b>${value}</b><br>`;
           }
-          $('#emergency').html(emergencyText);
+          $('#emergency').html(emergencyText); 
           let neighbours = '<span class="weatherE">Neighbours: </span>';
           for (let x = 0; x < travelInfo['neighbors'].length; x++) {
             if (x == travelInfo['neighbors'].length - 1) {
@@ -237,7 +237,7 @@ navigator.geolocation.getCurrentPosition(function success(position) {
           if(travelInfo['advise']['CA']['advise'] != undefined) {
             $('#advise').html(`<br><span class="weatherE">Travel Advise: </span><b>${travelInfo['advise']['CA']['advise']}</b>`);
           } 
-        
+        */
         
 
           /*--------------------- CURRENCY SECTION ---------------------*/

@@ -459,7 +459,8 @@ margin-left:10px;
     box-shadow: 2px 2px 5px rgb(128, 128, 128);
 }
 #countryPhoto {
-    width:45%;
+    width:85%;
+    margin:0 auto;
 }
 #showInfoC {
     font-size:1em;
@@ -471,11 +472,6 @@ margin-left:10px;
 #emergency {
     text-align:right;
     width:53%;
-}
-#topInfo {
-    display:flex;
-    flex-wrap:wrap;
-    align-content: space-around;
 }
 /* --- small panel --- */
 #homeLocation {
