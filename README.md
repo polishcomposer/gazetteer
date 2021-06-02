@@ -1,6 +1,6 @@
 # Gazetteer
 <p align="center">
-  <img src="https://www.swoszowski.co.uk/companydirectory/libs/img/gazetteer.png">
+  <img src="https://www.swoszowski.co.uk/libs/img/gazetteer.png">
 </p>
 
 **Functionality**
